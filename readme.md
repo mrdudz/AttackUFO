@@ -1,6 +1,8 @@
 
 ## Attack UFO
 
+inspired by this thread: https://sleepingelephant.com/ipw-web/bulletin/bb/viewtopic.php?t=8775
+
 ![screenshot](img/attackufo.png)
 
 This is a crude hack to make the japanese arcade game "Attack UFO" work on the
@@ -30,6 +32,17 @@ gpz 10/12/2017
 
 use "make" and "make test". requires ACME.
 
+### Status
+
+controls work, it can be played.
+
+the main problem i am facing right now to make this into something others can use is a combination of two things:
+
+- the game uses $0200-$03ff for the screen (video ram)
+- the game uses a weird subroutine call mechanism implemented via BRK handlers
+
+so far what i have done is hooking into a routine that gets called once per frame, and then i just copy the screen (and color ram) to some location that is suitable for vic20 :)
+
 ### Details
 
 https://github.com/mamedev/mame/blob/master/src/mame/drivers/attckufo.cpp
@@ -38,7 +51,7 @@ https://github.com/mamedev/mame/blob/master/src/mame/drivers/attckufo.cpp
  PIA at 1400-1403
 
  RAM  0000-0fff
- RAM  1c00-1fff
+ RAM  1c00-1fff (dynamic characters)
 
  VIC videoram: 0000-3fff
     colorram: 0000-03ff
@@ -47,7 +60,7 @@ https://github.com/mamedev/mame/blob/master/src/mame/drivers/attckufo.cpp
       colors: 0600-07ff (old)
 
  workcharset: 1c00-1fff (old)
-    realchar: 2000-23ff (old)
+    realchar: 2000-23ff (old) (static characters)
 
  ->  9400-95FF   location of COLOR RAM with additional RAM at blk 1
  ->  9600-97FF   Normal location of COLOR RAM
